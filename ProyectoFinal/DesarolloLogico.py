@@ -1,4 +1,5 @@
 import csv
+import tkinter as tk
 
 class Perfil:
     def __init__(self, jubilado=False, estudiante=False, trabajador=True):
@@ -28,7 +29,7 @@ class Movimiento :
         monto_convertido = self.convertir_divisa(divisa)
         with open('balance.csv', 'a') as file:
             file.write(f'{monto_convertido},{self.dia},{self.mes},{self.año}\n')
-        balance()
+        balance_actualizado = balance()
 
 class Ingreso(Movimiento):
     def ingresos(self, divisa):
@@ -46,4 +47,43 @@ def balance():
             linea = line.split(',')
             monto = int(linea[0])
             suma += monto
-        print(suma)
+    return suma
+
+
+class IngresoCatalogado(Ingreso):
+    def __init__(self, monto, dia, mes, año, divisa, tipo, descripcion):
+        super().__init__(monto, dia, mes, año, divisa)
+        self.tipo = tipo
+        self.descripcion = descripcion
+
+    def guardar_ingreso(self, divisa):
+        monto_convertido = self.convertir_divisa(divisa)
+        with open('balance.csv', 'a') as file:
+            file.write(f'{monto_convertido},{self.dia},{self.mes},{self.año},{self.tipo},{self.descripcion}\n')
+
+    
+class EgresoCatalogado(Egreso):
+    def __init__(self, monto, dia, mes, año, divisa, categoria):
+        super().__init__(monto, dia, mes, año, divisa)
+        self.categoria = categoria
+
+    def guardar(self, divisa):
+        monto_convertido = self.convertir_divisa(divisa)
+        with open('balance.csv', 'a') as file:
+            file.write(f'{monto_convertido},{self.dia},{self.mes},{self.año},{self.categoria}\n')
+
+    @staticmethod
+    def obtener_egresos_por_categoria(categoria):
+        with open('balance.csv', 'r') as file:
+            egresos = []
+            for line in file:
+                linea = line.split(',')
+                monto = int(linea[0])
+                dia = int(linea[1])
+                mes = int(linea[2])
+                año = int(linea[3])
+                cat = linea[4].strip()
+                if cat == categoria:
+                    egreso = EgresoCatalogado(monto, dia, mes, año, '', cat)
+                    egresos.append(egreso)
+            return egresos
