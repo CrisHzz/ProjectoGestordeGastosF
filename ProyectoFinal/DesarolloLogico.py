@@ -51,15 +51,14 @@ def balance():
 
 
 class IngresoCatalogado(Ingreso):
-    def __init__(self, monto, dia, mes, año, divisa, tipo, descripcion):
+    def __init__(self, monto, dia, mes, año, divisa, categoria, ):
         super().__init__(monto, dia, mes, año, divisa)
-        self.tipo = tipo
-        self.descripcion = descripcion
+        self.categoria = categoria
 
     def guardar_ingreso(self, divisa):
         monto_convertido = self.convertir_divisa(divisa)
         with open('balance.csv', 'a') as file:
-            file.write(f'{monto_convertido},{self.dia},{self.mes},{self.año},{self.tipo},{self.descripcion}\n')
+            file.write(f'{monto_convertido},{self.dia},{self.mes},{self.año},{self.categoria}\n')
 
     
 class EgresoCatalogado(Egreso):
@@ -68,9 +67,10 @@ class EgresoCatalogado(Egreso):
         self.categoria = categoria
 
     def guardar(self, divisa):
-        monto_convertido = self.convertir_divisa(divisa)
+        monto_convertido = int(self.convertir_divisa(divisa))
+        print(monto_convertido)
         with open('balance.csv', 'a') as file:
-            file.write(f'{monto_convertido},{self.dia},{self.mes},{self.año},{self.categoria}\n')
+            file.write(f'{monto_convertido*-1},{self.dia},{self.mes},{self.año},{self.categoria}\n')
 
     @staticmethod
     def obtener_egresos_por_categoria(categoria):
