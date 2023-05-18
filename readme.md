@@ -7,9 +7,9 @@ Con esto puede Ingresar sus ingresos,egresarlos,catalogarlos por categorias o se
 Las siguienes seran las funcionalidades del programa.
 
 1. Registrar el usuario en la plataforma y elegir un perfil
-2. Elegir la opción de ingresos y hacer el respectivo añadido
-3. Elegir la opción de egresos y hacer el respectivo estado
-4. seleccionar la divisa con el que sistema trabajara y el dinero se mostrará
+2. seleccionar la divisa con el que sistema trabajara y el dinero se mostrará
+3. Elegir la opción de ingresos y hacer el respectivo añadido
+4. Elegir la opción de egresos y hacer el respectivo estado
 5. Catalogar sus ingresos según el tipo
 6. Catalogar sus egresos según el tipo y finalidad
 7. Visualizar en una gráfica como esta su balance total con los ingresos y egresos
