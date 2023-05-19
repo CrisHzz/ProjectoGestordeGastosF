@@ -63,6 +63,7 @@ def agregar_pago_habitual():
     label = tk.Label(root,text="seleccione la \nfrecuencia del pago:",width=30, height=5, bg="lightblue",font=("Arial", 20))
     label.grid(row=0, column=2)
 
+
     agregar_button1 = tk.Button(root,text="cada mes",bg="lightblue",width=25, height=5,font=("Arial", 13),command=lambda: crear_pago_habitual(True))
     agregar_button1.grid(row=2, column=2, padx=10,pady=10, ipadx=20, ipady=10)
 
