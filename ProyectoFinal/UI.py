@@ -8,6 +8,57 @@ hoy = date.today()
 
 from DesarolloLogico import Perfil, IngresoCatalogado, Egreso, balance, Ingreso, EgresoCatalogado,Movimiento
 
+def registrar_pago_habitual(categoria,cantidad,tipo):
+
+    with open('ingreso_habitual.csv', 'a') as file:
+        if tipo :
+            if categoria :
+                file.write(f'{cantidad},{hoy.day},{hoy.month},{hoy.year},{"Habitual M"}\n')
+            else:
+                file.write(f'{cantidad},{hoy.day},{hoy.month},{hoy.year},{"Habitual S"}\n')
+        else:
+            if categoria:
+                file.write(
+                    f'{cantidad*-1},{hoy.day},{hoy.month},{hoy.year},{"Habitual M"}\n')
+                else:
+                file.write(f'{cantidad*-1},{hoy.day},{hoy.month},{hoy.year},{"Habitual S"}\n')
+
+def crear_pago_habitual(tipo):
+    limpiar_ventana()
+    label = tk.Label(root,text="digite la cantidad y seleccione el tipo:",width=20, height=5, bg="lightblue",font=("Arial", 20))
+    label.grid(row=0, column=2)
+
+    monto_label = tk.Label(root, text="Monto:", width=25,font=("Arial", 13),bg="lightblue")
+    monto_label.grid(row=2, column=2, pady=10)
+    monto_entry = tk.Entry(root, width=25,font=("Arial", 13))
+    monto_entry.grid(row=3, column=2, pady=10)
+
+    agregar_button = tk.Button(button_frame,text="ingreso",bg="lightblue",width=25, height=5,font=("Arial", 13),command=lambda: registrar_pago_habitual(tipo,monto_entry.get(),True))
+    agregar_button.grid(row=4, column=2, padx=10,pady=10, ipadx=20, ipady=10)
+
+    agregar_button = tk.Button(button_frame,text="egreso",bg="lightblue",width=25, height=5,font=("Arial", 13),command=lambda: registrar_pago_habitual(tipo,monto_entry.get(),False))
+    agregar_button.grid(row=5, column=2, padx=10,pady=10, ipadx=20, ipady=10)
+
+
+def agregar_pago_habitual():
+    limpiar_ventana()
+    label = tk.Label(root,text="seleccione la frecuencia del pago:",width=20, height=5, bg="lightblue",font=("Arial", 20))
+    label.grid(row=0, column=2)
+
+    agregar_button = tk.Button(button_frame,text="cada mes",bg="lightblue",width=25, height=5,font=("Arial", 13),command=lambda: ver_movimientos(True))
+    agregar_button.grid(row=2, column=2, padx=10,pady=10, ipadx=20, ipady=10)
+
+    agregar_button = tk.Button(button_frame,text="cada semana",bg="lightblue",width=25, height=5,font=("Arial", 13),command=lambda: crear_pago_habitual(False))
+    agregar_button.grid(row=4, column=2, padx=10,pady=10, ipadx=20, ipady=10)
+
+def pagos_habituales():
+    limpiar_ventana()
+    label = tk.Label(root,text="seleccione una\n opcion:",width=20, height=5, bg="lightblue",font=("Arial", 20))
+    label.grid(row=0, column=2)
+
+    agregar_button = tk.Button(button_frame,text="agregar pago habitual",bg="lightblue",width=25, height=5,font=("Arial", 13),command=lambda: ver_movimientos())
+    agregar_button.grid(row=0, column=1, padx=10,pady=10, ipadx=20, ipady=10)
+
 def guardar_ingreso(monto,categoria, divisa):
 
     ingreso_catalogado = IngresoCatalogado(monto, hoy.day, hoy.month, hoy.year, divisa, categoria)
@@ -47,14 +98,16 @@ def ver_movimientos(count=0,count1=0):
         for line in file:
             linea = line.split(',')
             if int(linea[0]) < 0 :
-                label = tk.Label(root,text="egreso:"+str(linea[0][1:])+"  fecha:"+linea[1]+"/"+linea[2]+"/"+linea[3]+"  categoria: "+linea[4],width=50, height=2,bg="white",font=("Arial", 12))
-                label.grid(row=count, column=2,pady=0)
+                label = tk.Label(root,text="egreso:"+str(linea[0][1:])+"  fecha:"+linea[1]+"/"+linea[2]+"/"+linea[3]+"  categoria: "+linea[4],width=50, height=2,bg="lightblue",font=("Arial", 12))
+                label.grid(row=count, column=3,pady=0)
                 count += 1
             else:
-                label = tk.Label(root, text="ingresos:" + str(linea[0]) + "  fecha:" + linea[1] + "/" +linea[2] + "/" +linea[3] + "  categoria: " +linea[4],width=50, height=2,bg="white",font=("Arial", 12))
+                label = tk.Label(root, text="ingresos:" + str(linea[0]) + "  fecha:" + linea[1] + "/" +linea[2] + "/" +linea[3] + "  categoria: " +linea[4],width=50, height=2,bg="lightblue",font=("Arial", 12))
                 label.grid(row=count1, column=1, pady=0)
                 count1 += 1
-        root.mainloop()
+    volver_button = tk.Button(root, text="Regresar", width=15,height=4, font=("Arial", 13),command=lambda: mostrar_opciones_ingreso_egreso())
+    volver_button.grid(row=10, column=2, padx=10, pady=20)
+    root.mainloop()
 def movimientos():
     with open('balance.csv', 'r') as file:
         suma1 = 0
@@ -87,33 +140,40 @@ def funciones_combinadas(monto, categoria, divisa,count):
         guardar_ingreso(monto, categoria, divisa)
     else:
         guardar_egreso(monto, categoria, divisa)
-    ver_movimientos()
+    mostrar_opciones_ingreso_egreso()
 
 def seleccionar_ingreso_egreso(opcion):
     limpiar_ventana()
     if opcion == "Ingreso":
-        ingreso_label = tk.Label(root, text="Por favor ingrese los detalles del ingreso", bg='lightblue', font=("RomanD", 25), anchor='center')
-        ingreso_label.pack(fill='both', expand=True)
+        ingreso_label = tk.Label(root, text="Por favor ingrese los\ndetalles del ingreso", bg='lightblue', font=("RomanD", 18), width=18)
+        ingreso_label.grid(row=1, column=2)
 
-        monto_label = tk.Label(root, text="Monto:",bg="lightblue")
-        monto_label.pack()
-        monto_entry = tk.Entry(root)
-        monto_entry.pack()
+        monto_label = tk.Label(root, text="Monto:",width=25,font=("Arial", 13),bg="lightblue")
+        monto_label.grid(row=4, column=2,pady=10)
+        monto_entry = tk.Entry(root,width=25,font=("Arial", 13))
+        monto_entry.grid(row=5, column=2,pady=10)
 
-        guardar_button = ttk.Button(root, text="Guardar", command=lambda: botones(monto_entry.get(),divisa,count=1))
-        guardar_button.pack()
+        guardar_button = tk.Button(root, text="siguiente",width=25,height=5,font=("Arial", 13), command=lambda: botones(monto_entry.get(),divisa,count=1))
+        guardar_button.grid(row=9, column=2, pady=10)
+
+        volver_button = tk.Button(root, text="Regresar",width=25,height=5,font=("Arial", 13),command=lambda: mostrar_opciones_ingreso_egreso())
+        volver_button.grid(row=10, column=2, pady=10)
+
 
     else:
-        egreso_label = tk.Label(root, text="Por favor ingrese los detalles del egreso", bg='lightblue', font=("RomanD", 25), anchor='center')
-        egreso_label.pack(fill='both', expand=True)
+        egreso_label = tk.Label(root,text="Por favor ingrese los\ndetalles del egreso",bg='lightblue',font=("RomanD", 18),width=18)
+        egreso_label.grid(row=1, column=10,ipadx=20, ipady=10)
 
-        monto_label = tk.Label(root, text="Monto:",bg="lightblue")
-        monto_label.pack()
-        monto_entry = tk.Entry(root)
-        monto_entry.pack()
+        monto_label = tk.Label(root, text="Monto:",width=25, font=("Arial", 13),bg="lightblue")
+        monto_label.grid(row=4, column=10, pady=10)
+        monto_entry = tk.Entry(root, width=25,font=("Arial", 13))
+        monto_entry.grid(row=5, column=10, pady=10,ipadx=20, ipady=10)
 
-        guardar_button = ttk.Button(root, text="Guardar", command=lambda:botones(monto_entry.get(), divisa,count=0))
-        guardar_button.pack()
+        guardar_button = tk.Button(root, text="siguiente",width=25, height=5,font=("Arial", 13),command=lambda: botones(monto_entry.get(),divisa, count=0))
+        guardar_button.grid(row=9, column=10, pady=10,ipadx=20, ipady=10)
+
+        volver_button = tk.Button(root, text="Regresar",width=25, height=5,font=("Arial", 13),command=lambda: mostrar_opciones_ingreso_egreso())
+        volver_button.grid(row=10, column=10, pady=10,ipadx=20, ipady=10)
 
     root.mainloop()
 
@@ -126,11 +186,17 @@ def mostrar_opciones_ingreso_egreso():
     button_frame = tk.Frame(root)
     button_frame.pack()
 
-    ingreso_button = tk.Button(button_frame, text="Ingreso",bg="lightblue", command=lambda: seleccionar_ingreso_egreso("Ingreso"))
+    ingreso_button = tk.Button(button_frame, text="Ingreso",bg="lightblue",width=25,height=5,font=("Arial", 13), command=lambda: seleccionar_ingreso_egreso("Ingreso"))
     ingreso_button.grid(row=0, column=0, padx=10, pady=10, ipadx=20, ipady=10)
 
-    egreso_button = tk.Button(button_frame, text="Egreso",bg="lightblue", command=lambda: seleccionar_ingreso_egreso("Egreso"))
-    egreso_button.grid(row=0, column=1, padx=10, pady=10, ipadx=20, ipady=10)
+    egreso_button = tk.Button(button_frame, text="Egreso",bg="lightblue",width=25,height=5,font=("Arial", 13), command=lambda: seleccionar_ingreso_egreso("Egreso"))
+    egreso_button.grid(row=0, column=2, padx=10, pady=10, ipadx=20, ipady=10)
+
+    verMovimientos_button = tk.Button(button_frame, text="Ver movimientos",bg="lightblue",width=25,height=5,font=("Arial", 13),command=lambda: ver_movimientos())
+    verMovimientos_button.grid(row=0, column=1, padx=10, pady=10,ipadx=20, ipady=10)
+
+    habituales_button = tk.Button(button_frame,text="Pagos habituales",bg="lightblue",width=25, height=5,font=("Arial", 13),command=lambda: pagos_habituales())
+    habituales_button.grid(row=0, column=1, padx=10,pady=10, ipadx=20, ipady=10)
 
     root.mainloop()
 
@@ -145,10 +211,10 @@ def mostrar_opciones_divisa():
     button_frame = tk.Frame(root)
     button_frame.pack()
 
-    usd_button = tk.Button(button_frame, text="USD", command=lambda: seleccionar_divisa("USD"))
+    usd_button = tk.Button(button_frame, text="USD",width=25, height=5,font=("Arial", 13), command=lambda: seleccionar_divisa("USD"))
     usd_button.grid(row=0, column=0, padx=10, pady=10, ipadx=20, ipady=10)
 
-    cop_button = tk.Button(button_frame, text="COP", command=lambda: seleccionar_divisa("COP"))
+    cop_button = tk.Button(button_frame, text="COP",width=25, height=5,font=("Arial", 13), command=lambda: seleccionar_divisa("COP"))
     cop_button.grid(row=0, column=1, padx=10, pady=10, ipadx=20, ipady=10)
 
     root.mainloop()
@@ -185,13 +251,13 @@ welcome_label.pack(fill='both', expand=True)
 button_frame = tk.Frame(root)
 button_frame.pack()
 
-jubilado_button = tk.Button(button_frame, text="Jubilado", command=lambda: seleccionar_perfil("jubilado"))
+jubilado_button = tk.Button(button_frame, text="Jubilado",width=25, height=5,font=("Arial", 13), command=lambda: seleccionar_perfil("jubilado"))
 jubilado_button.grid(row=0, column=0, padx=10, pady=10, ipadx=20, ipady=10)
 
-estudiante_button = tk.Button(button_frame, text="Estudiante", command=lambda: seleccionar_perfil("estudiante"))
+estudiante_button = tk.Button(button_frame, text="Estudiante",width=25, height=5,font=("Arial", 13), command=lambda: seleccionar_perfil("estudiante"))
 estudiante_button.grid(row=0, column=1, padx=10, pady=10, ipadx=20, ipady=10)
 
-trabajador_button = tk.Button(button_frame, text="Trabajador", command=lambda: seleccionar_perfil("trabajador"))
+trabajador_button = tk.Button(button_frame, text="Trabajador",width=25, height=5,font=("Arial", 13), command=lambda: seleccionar_perfil("trabajador"))
 trabajador_button.grid(row=0, column=2, padx=10, pady=10, ipadx=20, ipady=10)
 
 root.mainloop()
