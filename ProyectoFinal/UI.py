@@ -18,9 +18,8 @@ def registrar_pago_habitual(categoria,cantidad,tipo):
                 file.write(f'{cantidad},{hoy.day},{hoy.month},{hoy.year},{"Habitual S"}\n')
         else:
             if categoria:
-                file.write(
-                    f'{cantidad*-1},{hoy.day},{hoy.month},{hoy.year},{"Habitual M"}\n')
-                else:
+                file.write(f'{cantidad*-1},{hoy.day},{hoy.month},{hoy.year},{"Habitual M"}\n')
+            else:
                 file.write(f'{cantidad*-1},{hoy.day},{hoy.month},{hoy.year},{"Habitual S"}\n')
 
 def crear_pago_habitual(tipo):
