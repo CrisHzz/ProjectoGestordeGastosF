@@ -222,7 +222,7 @@ def mostrar_opciones_ingreso_egreso():
     verMovimientos_button.grid(row=0, column=1, padx=10, pady=10,ipadx=20, ipady=10)
 
     habituales_button = tk.Button(button_frame,text="Pagos habituales",bg="lightblue",width=25, height=5,font=("Arial", 13),command=lambda: pagos_habituales())
-    habituales_button.grid(row=0, column=1, padx=10,pady=10, ipadx=20, ipady=10)
+    habituales_button.grid(row=0, column=3, padx=10,pady=10, ipadx=20, ipady=10)
 
     root.mainloop()
 
