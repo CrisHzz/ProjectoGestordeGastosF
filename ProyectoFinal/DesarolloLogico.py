@@ -87,3 +87,59 @@ class EgresoCatalogado(Egreso):
                     egreso = EgresoCatalogado(monto, dia, mes, año, '', cat)
                     egresos.append(egreso)
             return egresos
+
+def monto():
+    with open('balance.csv', 'r') as file:
+        list = []
+        for line in file:
+            linea = line.split(',')
+            list.append(linea[0])
+        return list
+
+
+def dia():
+    with open('balance.csv', 'r') as file:
+        list = []
+        for line in file:
+            linea = line.split(',')
+            list.append(linea[1])
+        return list
+
+
+def mes():
+    with open('balance.csv', 'r') as file:
+        list = []
+        for line in file:
+            linea = line.split(',')
+            list.append(linea[2])
+        return list
+
+
+def año():
+    with open('balance.csv', 'r') as file:
+        list = []
+        for line in file:
+            linea = line.split(',')
+            list.append(linea[3].replace("\n", ""))
+        return list
+
+
+def filtrar(filtro, tipo_filtro):
+    listMonto = monto()
+    listDia = dia()
+    listMes = mes()
+    listAño = año()
+    if tipo_filtro == 1:
+        for i in range(len(listDia)):
+            if str(filtro) == listDia[i]:
+                print(listMonto[i], listDia[i], listMes[i],listAño[i])
+    elif tipo_filtro == 2:
+        for i in range(len(listMes)):
+            if str(filtro) == listMes[i]:
+                print(listMonto[i], listDia[i], listMes[i],listAño[i])
+    elif tipo_filtro == 3:
+        for i in range(len(listAño)):
+            if str(filtro) == listAño[i]:
+                print(listMonto[i], listDia[i], listMes[i],listAño[i])
+
+filtrar(4, 2)

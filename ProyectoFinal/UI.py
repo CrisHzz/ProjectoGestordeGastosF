@@ -1,30 +1,48 @@
 import tkinter as tk
-from tkinter import ttk
 from datetime import date
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 hoy = date.today()
 
-from DesarolloLogico import Perfil, IngresoCatalogado, Egreso, balance, Ingreso, EgresoCatalogado,Movimiento
+from DesarolloLogico import Perfil, IngresoCatalogado,  EgresoCatalogado
+
+
+def ver_habituales(count=0,count1=0):
+    limpiar_ventana()
+    with open('ingreso_habitual.csv', 'r') as file:
+        for line in file:
+            linea = line.split(',')
+            if int(linea[0]) < 0 :
+                label = tk.Label(root,text="egreso:"+str(linea[0][1:])+"  fecha:"+linea[1]+"/"+linea[2]+"/"+linea[3]+"  categoria: "+linea[4],width=50, height=2,bg="lightblue",font=("Arial", 12))
+                label.grid(row=count, column=3,pady=0)
+                count += 1
+            else:
+                label = tk.Label(root, text="ingresos:" + str(linea[0]) + "  fecha:" + linea[1] + "/" +linea[2] + "/" +linea[3] + "  categoria: " +linea[4],width=50, height=2,bg="lightblue",font=("Arial", 12))
+                label.grid(row=count1, column=1, pady=0)
+                count1 += 1
+    volver_button = tk.Button(root, text="Regresar", width=15,height=4, font=("Arial", 13),command=lambda: mostrar_opciones_ingreso_egreso())
+    volver_button.grid(row=10, column=2, padx=10, pady=20)
+    root.mainloop()
 
 def registrar_pago_habitual(categoria,cantidad,tipo):
 
     with open('ingreso_habitual.csv', 'a') as file:
         if tipo :
             if categoria :
-                file.write(f'{cantidad},{hoy.day},{hoy.month},{hoy.year},{"Habitual M"}\n')
+                file.write(f'{cantidad},{hoy.day},{hoy.month},{hoy.year},{"Habitual Mes"}\n')
             else:
-                file.write(f'{cantidad},{hoy.day},{hoy.month},{hoy.year},{"Habitual S"}\n')
+                file.write(f'{cantidad},{hoy.day},{hoy.month},{hoy.year},{"Habitual Semana"}\n')
         else:
             if categoria:
-                file.write(f'{cantidad*-1},{hoy.day},{hoy.month},{hoy.year},{"Habitual M"}\n')
+                file.write(f'{int(cantidad)*-1},{hoy.day},{hoy.month},{hoy.year},{"Habitual Mes"}\n')
             else:
-                file.write(f'{cantidad*-1},{hoy.day},{hoy.month},{hoy.year},{"Habitual S"}\n')
+                file.write(f'{int(cantidad)*-1},{hoy.day},{hoy.month},{hoy.year},{"Habitual Semana"}\n')
+    mostrar_opciones_ingreso_egreso()
 
 def crear_pago_habitual(tipo):
     limpiar_ventana()
-    label = tk.Label(root,text="digite la cantidad y seleccione el tipo:",width=20, height=5, bg="lightblue",font=("Arial", 20))
+    label = tk.Label(root,text="digite la cantidad y\n seleccione el tipo:",width=20, height=5, bg="lightblue",font=("Arial", 20))
     label.grid(row=0, column=2)
 
     monto_label = tk.Label(root, text="Monto:", width=25,font=("Arial", 13),bg="lightblue")
@@ -32,31 +50,39 @@ def crear_pago_habitual(tipo):
     monto_entry = tk.Entry(root, width=25,font=("Arial", 13))
     monto_entry.grid(row=3, column=2, pady=10)
 
-    agregar_button = tk.Button(button_frame,text="ingreso",bg="lightblue",width=25, height=5,font=("Arial", 13),command=lambda: registrar_pago_habitual(tipo,monto_entry.get(),True))
+    agregar_button = tk.Button(root,text="ingreso",bg="lightblue",width=25, height=5,font=("Arial", 13),command=lambda: registrar_pago_habitual(tipo,monto_entry.get(),True))
     agregar_button.grid(row=4, column=2, padx=10,pady=10, ipadx=20, ipady=10)
 
-    agregar_button = tk.Button(button_frame,text="egreso",bg="lightblue",width=25, height=5,font=("Arial", 13),command=lambda: registrar_pago_habitual(tipo,monto_entry.get(),False))
+    agregar_button = tk.Button(root,text="egreso",bg="lightblue",width=25, height=5,font=("Arial", 13),command=lambda: registrar_pago_habitual(tipo,monto_entry.get(),False))
     agregar_button.grid(row=5, column=2, padx=10,pady=10, ipadx=20, ipady=10)
 
+    root.mainloop()
 
 def agregar_pago_habitual():
     limpiar_ventana()
-    label = tk.Label(root,text="seleccione la frecuencia del pago:",width=20, height=5, bg="lightblue",font=("Arial", 20))
+    label = tk.Label(root,text="seleccione la \nfrecuencia del pago:",width=30, height=5, bg="lightblue",font=("Arial", 20))
     label.grid(row=0, column=2)
 
-    agregar_button = tk.Button(button_frame,text="cada mes",bg="lightblue",width=25, height=5,font=("Arial", 13),command=lambda: ver_movimientos(True))
-    agregar_button.grid(row=2, column=2, padx=10,pady=10, ipadx=20, ipady=10)
+    agregar_button1 = tk.Button(root,text="cada mes",bg="lightblue",width=25, height=5,font=("Arial", 13),command=lambda: crear_pago_habitual(True))
+    agregar_button1.grid(row=2, column=2, padx=10,pady=10, ipadx=20, ipady=10)
 
-    agregar_button = tk.Button(button_frame,text="cada semana",bg="lightblue",width=25, height=5,font=("Arial", 13),command=lambda: crear_pago_habitual(False))
-    agregar_button.grid(row=4, column=2, padx=10,pady=10, ipadx=20, ipady=10)
+    agregar_button2 = tk.Button(root,text="cada semana",bg="lightblue",width=25, height=5,font=("Arial", 13),command=lambda: crear_pago_habitual(False))
+    agregar_button2.grid(row=4, column=2, padx=10,pady=10, ipadx=20, ipady=10)
+
+    root.mainloop()
 
 def pagos_habituales():
     limpiar_ventana()
     label = tk.Label(root,text="seleccione una\n opcion:",width=20, height=5, bg="lightblue",font=("Arial", 20))
     label.grid(row=0, column=2)
 
-    agregar_button = tk.Button(button_frame,text="agregar pago habitual",bg="lightblue",width=25, height=5,font=("Arial", 13),command=lambda: ver_movimientos())
-    agregar_button.grid(row=0, column=1, padx=10,pady=10, ipadx=20, ipady=10)
+    agregar_button = tk.Button(root,text="agregar pago habitual",bg="lightblue",width=25, height=5,font=("Arial", 13),command=lambda: agregar_pago_habitual())
+    agregar_button.grid(row=1, column=2, padx=10,pady=10,)
+
+    agregar_button = tk.Button(root,text="ver pagos habituales",bg="lightblue",width=25, height=5,font=("Arial", 13),command=lambda: ver_habituales())
+    agregar_button.grid(row=2, column=2, padx=10,pady=10,)
+
+    root.mainloop()
 
 def guardar_ingreso(monto,categoria, divisa):
 
